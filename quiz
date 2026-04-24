@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Which Library Events Should You Attend?</title>
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #5f7cff, #c77dff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    color: #fff;
+  }
+
+  .quiz {
+    max-width: 500px;
+    width: 100%;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    text-align: center;
+    opacity: 0.85;
+    margin-bottom: 22px;
+    font-size: 14px;
+  }
+
+  .progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 22px;
+  }
+
+  .dot {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 99px;
+  }
+
+  .dot.done { background: #fff; }
+
+  .question {
+    font-size: 20px;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .opt {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    padding: 14px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s, border 0.2s;
+  }
+
+  .opt:hover {
+    background: rgba(255,255,255,0.22);
+  }
+
+  .opt.selected {
+    border-color: #ffbdf7;
+    background: rgba(255,189,247,0.25);
+    font-weight: 600;
+  }
+
+  .btn {
+    margin-top: 22px;
+    width: 100%;
+    padding: 14px;
+    background: #fff;
+    color: #5f7cff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .result {
+    display: none;
+    text-align: center;
+  }
+
+  .result img {
+    width: 160px;
+    margin: 20px auto;
+    display: block;
+  }
+
+  .result p {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.9;
+    white-space: pre-line;
+  }
+
+  .links {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .link-btn {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.35);
+    padding: 12px;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .link-btn:hover {
+    background: rgba(255,255,255,0.25);
+  }
+
+  .restart {
+    margin-top: 24px;
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+  }
+</style>
+</head>
+
+<body>
+<div class="quiz">
+
+  <!-- QUIZ -->
+  <div id="quiz">
+    <h1>Which Library Events Are for You? ✨</h1>
+    <div class="subtitle">A quick quiz for new students</div>
+
+    <div class="progress" id="progress"></div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+
+    <button class="btn" id="nextBtn" disabled>Next →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="result">
+    <h1 id="resultTitle"></h1>
+    <img id="resultImg" alt="" />
+    <p id="resultDesc"></p>
+
+    <div class="links" id="resultLinks"></div>
+
+    <button class="btn restart" onclick="restart()">Take it again</button>
+  </div>
+
+</div>
+
+<script>
+/* =================================================
+   UPDATE THESE LINKS ANYTIME (NO CODE CHANGES)
+================================================= */
+
+const EVENT_CALENDAR_LINKS = {
+  "Chill & Social": "https://YOUR-LIBRARY-SITE.edu/events?category=social",
+  "Academic Success": "https://YOUR-LIBRARY-SITE.edu/events?category=academic",
+  "Creative & Interactive": "https://YOUR-LIBRARY-SITE.edu/events?category=creative"
+};
+
+/* =================================================
+   RESULTS (3 TOTAL)
+================================================= */
+
+const RESULTS = [
+  "Chill & Social",
+  "Academic Success",
+  "Creative & Interactive"
+];
+
+const RESULT_INFO = {
+  "Chill & Social": {
+    title: "Chill & Social ☕🎲",
+    desc:
+`You’re here to relax, meet people, and enjoy the library without pressure.
+
+Events you’ll love:
+• Game nights
+• Welcome‑week hangouts
+• Finals stress‑relief
+• Snacks + chill events`,
+    image: "https://via.placeholder.com/300x300?text=Chill+%26+Social"
+  },
+
+  "Academic Success": {
+    title: "Academic Success 📚✅",
+    desc:
+`You want to feel confident and prepared for your classes.
+
+Events you’ll love:
+• Research workshops
+• Study skills sessions
+• Citation help
+• Library tours with tips`,
+    image: "https://via.placeholder.com/300x300?text=Academic+Success"
+  },
+
+  "Creative & Interactive": {
+    title: "Creative & Interactive 🎨🎧",
+    desc:
+`You love hands‑on experiences and learning by doing.
+
+Events you’ll love:
+• Makerspace workshops
+• Craft & zine nights
+• Media lab demos
+• Creative drop‑ins`,
+    image: "https://via.placeholder.com/300x300?text=Creative+%26+Interactive"
+  }
+};
+
+/* =================================================
+   QUESTIONS (EDIT FREELY)
+================================================= */
+
+const questions = [
+  {
+    text: "What are you most excited about on campus?",
+    options: [
+      { label: "Meeting people & having fun", result: "Chill & Social" },
+      { label: "Doing well in my classes", result: "Academic Success" },
+      { label: "Trying new creative things", result: "Creative & Interactive" }
+    ]
+  },
+  {
+    text: "Pick a perfect library vibe:",
+    options: [
+      { label: "Low‑key, no pressure", result: "Chill & Social" },
+      { label: "Focused and helpful", result: "Academic Success" },
+      { label: "Hands‑on and interactive", result: "Creative & Interactive" }
+    ]
+  },
+  {
+    text: "What would make you walk into a library event?",
+    options: [
+      { label: "Free snacks or games", result: "Chill & Social" },
+      { label: "Clear academic benefits", result: "Academic Success" },
+      { label: "Getting to make or try something", result: "Creative & Interactive" }
+    ]
+  }
+];
+
+/* =================================================
+   QUIZ LOGIC
+================================================= */
+
+let current = 0;
+let answers = [];
+let scores = {};
+
+function init() {
+  current = 0;
+  answers = [];
+  scores = {};
+  RESULTS.forEach(r => scores[r] = 0);
+}
+
+function render() {
+  const q = questions[current];
+
+  const progress = document.getElementById("progress");
+  progress.innerHTML = "";
+  questions.forEach((_, i) => {
+    const d = document.createElement("div");
+    d.className = "dot" + (i < current ? " done" : "");
+    progress.appendChild(d);
+  });
+
+  document.getElementById("question").textContent = q.text;
+
+  const opts = document.getElementById("options");
+  opts.innerHTML = "";
+
+  q.options.forEach((o, i) => {
+    const btn = document.createElement("div");
+    btn.className = "opt" + (answers[current] === i ? " selected" : "");
+    btn.textContent = o.label;
+    btn.onclick = () => select(i);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById("nextBtn").disabled = answers[current] == null;
+}
+
+function select(i) {
+  answers[current] = i;
+  render();
+}
+
+document.getElementById("nextBtn").onclick = () => {
+  const choice = questions[current].options[answers[current]];
+  scores[choice.result]++;
+
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
+};
+
+function showResult() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("result").style.display = "block";
+
+  const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const info = RESULT_INFO[winner];
+
+  document.getElementById("resultTitle").textContent = info.title;
+  document.getElementById("resultDesc").textContent = info.desc;
+  document.getElementById("resultImg").src = info.image;
+
+  const links = document.getElementById("resultLinks");
+  links.innerHTML = "";
+
+  // Calendar link
+  const calLink = document.createElement("a");
+  calLink.className = "link-btn";
+  calLink.href = EVENT_CALENDAR_LINKS[winner];
+  calLink.target = "_blank";
+  calLink.textContent = "📅 See upcoming events";
+  links.appendChild(calLink);
+
+  // Email link (no backend needed)
+  const emailLink = document.createElement("a");
+  emailLink.className = "link-btn";
+  emailLink.href =
+    `mailto:?subject=My Library Event Match&body=I got "${info.title}" on the library events quiz!`;
+  emailLink.textContent = "📧 Email me my results";
+  links.appendChild(emailLink);
+}
+
+function restart() {
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("result").style.display = "none";
+  init();
+  render();
+}
+
+init();
+render();
+</script>
+</body>
+</html>
