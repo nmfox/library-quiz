@@ -6,16 +6,26 @@
 <title>Which Library Events Should You Attend?</title>
 
 <style>
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #5f7cff, #c77dff);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
-    color: #fff;
-  }
+ body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Belmont-inspired gradient */
+  background:
+    linear-gradient(
+      135deg,
+      #0c2340 0%,   /* Belmont blue (deep navy) */
+      #002855 40%,
+      #9d2235 70%,  /* Belmont red */
+      #8b1c2d 100%
+    );
+
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  color: #f8f9fa; /* off-white for contrast */
+}
 
   .quiz {
     max-width: 500px;
@@ -62,37 +72,30 @@
     gap: 10px;
   }
 
-  .opt {
-    background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.25);
-    padding: 14px 16px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s, border 0.2s;
-  }
+.opt {
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(255,255,255,0.35);
+  padding: 14px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #fff;
+}
 
-  .opt:hover {
-    background: rgba(255,255,255,0.22);
-  }
+.opt:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
 
-  .opt.selected {
-    border-color: #ffbdf7;
-    background: rgba(255,189,247,0.25);
-    font-weight: 600;
-  }
+.opt.selected {
+  border-color: #ffd6dc;
+  background: rgba(157, 34, 53, 0.65); /* Belmont red highlight */
+  font-weight: 600;
+}
 
-  .btn {
-    margin-top: 22px;
-    width: 100%;
-    padding: 14px;
-    background: #fff;
-    color: #5f7cff;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
+.btn {
+  background: #f8f9fa;
+  color: #0c2340;
+}
 
   .btn:disabled {
     opacity: 0.5;
@@ -144,6 +147,31 @@
     border: 2px solid #fff;
     color: #fff;
   }
+  .options.image-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.opt.has-image {
+  padding: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.opt-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.opt-label {
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
 </style>
 </head>
 
